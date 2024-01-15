@@ -1,0 +1,14 @@
+*
+!CMakeLists.txt
+!docs/
+!docs/*
+!include/
+!include/*
+!test/
+!test/*
+!test/test_dir/
+!test/test_dir/**
+!test/src/**
+test/bin/
+!.gitignore
+
