@@ -3,7 +3,7 @@
 !docs/
 !docs/**
 !include/
-!include/*
+!include/**
 !test/
 !test/*
 !test/test_dir/
