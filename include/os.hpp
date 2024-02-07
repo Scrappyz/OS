@@ -579,91 +579,19 @@ namespace os {
         }
     }
 
-    // private namespace for helper functions
-    namespace _private {
-        inline bool execute(const char* command, bool wait)
-        {
-            #if defined(_WIN32)
-                STARTUPINFO si;
-                PROCESS_INFORMATION pi;
-                ZeroMemory(&si, sizeof(si));
-                ZeroMemory(&pi, sizeof(pi));
-                si.cb = sizeof(si);
-
-                if(CreateProcess(NULL, const_cast<LPSTR>(command), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
-                    if(wait) {
-                        WaitForSingleObject(pi.hProcess, INFINITE);
-                        CloseHandle(pi.hProcess);
-                        CloseHandle(pi.hThread);
-                    }
-                    return true;
-                } 
-
-                return false;
-            #else
-                pid_t pid = fork();
-
-                if(pid == 0) {
-                    execl("/bin/sh", "sh", "-c", command, NULL);
-                    _exit(1); 
-                } else if(pid > 0) {
-                    if(wait) {
-                        wait(NULL); 
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            #endif
+    std::string execute(const std::string& command, const std::string& mode = "r")
+    {
+        FILE* pipe = popen(command.c_str(), mode.c_str());
+        if(!pipe) {
+            throw std::runtime_error("Execution Failed");
         }
-    }
 
-    inline bool execute(const std::string& command, bool wait = false)
-    {
-        return _private::execute(command.c_str(), wait);
-    }
-
-    inline bool execute(const std::vector<std::string>& command, bool wait = false)
-    {
-        std::string cstr;
-        for(int i = 0; i < command.size(); i++) {
-            cstr.append('"' + command[i] + '"');
-            if(i < command.size()-1) {
-                cstr.push_back(' ');
-            }
+        char buffer[128];
+        std::string output;
+        while(fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+            output += buffer;
         }
-        return _private::execute(cstr.c_str(), wait);
-    }
-
-    inline bool execute(const std::initializer_list<std::string>& command, bool wait = false)
-    {
-        return execute(std::vector<std::string>(command), wait);
-    }
-
-    inline bool open(const std::filesystem::path& file, const std::filesystem::path& program = "")
-    {
-        bool success = false;
-
-        #if defined(_WIN32)
-            if(program.empty()) {
-                HINSTANCE result = ShellExecuteW(NULL, L"open", file.c_str(), NULL, NULL, SW_SHOWNORMAL);
-                success = (INT_PTR)result > 32;
-            } else {
-                HINSTANCE result = ShellExecuteW(NULL, L"open", program.c_str(), file.c_str(), NULL, SW_SHOWNORMAL);
-                success = (INT_PTR)result > 32;
-            }
-        #elif defined(__APPLE__) || defined(__linux__)
-            std::string command = "xdg-open";
-            if (!program.empty()) {
-                command = program.string();
-            }
-
-            std::string filePath = file.string();
-
-            int result = std::system((command + " \"" + filePath + "\"").c_str());
-            success = (result == 0);
-        #endif
-
-        return success;
+        pclose(pipe);
+        return output;
     }
 }
