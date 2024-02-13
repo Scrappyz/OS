@@ -95,6 +95,16 @@ TEST(fileExtension, getExtension)
     EXPECT_EQ(path::fileExtension("foo/bar/file."), "");
 }
 
+TEST(appendFileExtension, join)
+{
+    EXPECT_EQ(path::appendFileExtension("tt", "json"), "tt.json");
+    EXPECT_EQ(path::appendFileExtension("hello.", "json"), "hello..json");
+    EXPECT_EQ(path::appendFileExtension("hello..", "json"), "hello...json");
+    EXPECT_EQ(path::appendFileExtension("hello", ".json"), "hello.json");
+    EXPECT_EQ(path::appendFileExtension("hello", "..json"), "hello.json");
+    EXPECT_EQ(path::appendFileExtension("hello.", ".json"), "hello..json");
+}
+
 TEST(joinPath, edge_case)
 {
     EXPECT_EQ(path::joinPath("", ""), "");

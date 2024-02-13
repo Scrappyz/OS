@@ -96,6 +96,22 @@ namespace os {
             return result;
         }
 
+        std::string appendFileExtension(std::string path, const std::string& extension)
+        {
+            int i = 0;
+            while(extension[i] == '.') {
+                i++;
+            }
+
+            path.push_back('.');
+            while(i < extension.size()) {
+                path.push_back(extension[i]);
+                i++;
+            }
+
+            return path;
+        }
+
         inline bool hasFileExtension(const std::filesystem::path& path)
         {
             return !fileExtension(path).empty();
