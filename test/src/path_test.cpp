@@ -103,6 +103,11 @@ TEST(appendFileExtension, join)
     EXPECT_EQ(path::appendFileExtension("hello", ".json"), "hello.json");
     EXPECT_EQ(path::appendFileExtension("hello", "..json"), "hello.json");
     EXPECT_EQ(path::appendFileExtension("hello.", ".json"), "hello..json");
+    EXPECT_EQ(path::appendFileExtension("hello.json", "json"), "hello.json");
+    EXPECT_EQ(path::appendFileExtension("hello.json", ".json"), "hello.json");
+    EXPECT_EQ(path::appendFileExtension("hello.json", "json", true), "hello.json.json");
+    EXPECT_EQ(path::appendFileExtension("hello.json", ".json", true), "hello.json.json");
+    EXPECT_EQ(path::appendFileExtension("hello.json", ".jtson"), "hello.json.jtson");
 }
 
 TEST(joinPath, edge_case)

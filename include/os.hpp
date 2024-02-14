@@ -96,11 +96,16 @@ namespace os {
             return result;
         }
 
-        std::string appendFileExtension(std::string path, const std::string& extension)
+        std::string appendFileExtension(std::string path, const std::string& extension, bool force = false)
         {
             int i = 0;
             while(extension[i] == '.') {
                 i++;
+            }
+
+            int extension_len = extension.size() - i;
+            if(!force && path.size() > extension_len && path.substr(path.size()-extension_len) == extension.substr(i, extension_len)) {
+                return path;
             }
 
             path.push_back('.');
