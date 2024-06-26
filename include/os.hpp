@@ -518,15 +518,19 @@ namespace os {
                 }
 
                 char ch;
-                if(std::filesystem::is_directory(from)) {
+                if(std::filesystem::is_directory(from)) { // is directory
+
+                    // Create directory when destination does not exists
                     if(!std::filesystem::exists(to)) {
                         std::filesystem::create_directories(to);
                     }
 
+                    // Throw an error if a directory is being copied into a file
                     if(!std::filesystem::is_directory(to)) {
                         throw std::runtime_error(_private::errorMessage(__func__, "\"" + to.filename().string() + "\" is a file"));
                     }
 
+                    // Remove all contents of directory when "OverwriteAll" option is active
                     if(op == CopyOption::OverwriteAll) {
                         for(const auto& entry : std::filesystem::directory_iterator(to)) {
                             path::remove(entry.path());
@@ -550,6 +554,7 @@ namespace os {
                         bool is_source_dir = std::filesystem::is_directory(source);
                         bool destination_exists = std::filesystem::exists(copy_to);
                         
+                        // display warning
                         if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
                             ch = _private::copyWarning(path::relativePath(copy_to));
                         }
@@ -564,7 +569,7 @@ namespace os {
                             _private::copyFile(source, copy_to);
                         } 
                     }
-                } else {
+                } else { // is file
                     if(from.filename().empty()) {
                         from = from.parent_path();
                     }
