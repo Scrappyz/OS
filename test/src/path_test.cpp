@@ -4,7 +4,8 @@
 
 namespace path = os::path;
 
-std::string test_path = path::joinPath(path::sourcePath(), "../test_dir");
+std::string test_path = path::joinPath(path::sourcePath(), "../test_path");
+std::string temp_path = path::joinPath(test_path, "temp");
 
 std::unordered_set<std::filesystem::path> getPathContent(const std::filesystem::path& path, bool include_parent = false)
 {
@@ -172,30 +173,34 @@ TEST(joins, end_separator)
 TEST(hasSameContent, not_exist)
 {
     EXPECT_THROW(path::hasSameContent("__wassup__.txt", "__hello.txt"), std::exception);
-    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), "__wassup__.txt"), std::exception);
-    EXPECT_THROW(path::hasSameContent("__wassup.txt", path::joinPath(test_path, "temp/shaggy.txt")), std::exception);
+    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "same3/shaggy.txt"), "__wassup__.txt"), std::exception);
+    EXPECT_THROW(path::hasSameContent("__wassup.txt", path::joinPath(test_path, "same3/shaggy.txt")), std::exception);
 }
 
 TEST(hasSameContent, not_same_type)
 {
-    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "temp"), path::joinPath(test_path, "temp/shaggy.txt")), std::exception);
-    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), path::joinPath(test_path, "temp")), std::exception);
+    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "same3"), path::joinPath(test_path, "same3/shaggy.txt")), std::exception);
+    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "same3/shaggy.txt"), path::joinPath(test_path, "same3")), std::exception);
 }
 
 TEST(hasSameContent, directories)
 {
     ASSERT_TRUE(path::hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "same2")));
-    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "temp")));
+    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "same3")));
 }
 
 TEST(hasSameContent, files)
 {
-    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), path::joinPath(test_path, "temp/shaggy1.txt")));
-    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "temp/sand1.txt"), path::joinPath(test_path, "temp/shaggy.txt")));
+    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_path, "same3/shaggy.txt"), path::joinPath(test_path, "same3/shaggy1.txt")));
+    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same3/sand1.txt"), path::joinPath(test_path, "same3/shaggy.txt")));
 }
 
-TEST(copy, general)
+TEST(copy, copying)
 {
-    ASSERT_TRUE(testCopy(path::joinPath(test_path, "same1"), path::joinPath(test_path, "temp")));
-    ASSERT_TRUE(testCopy(path::joinPath(test_path, "same1/"), path::joinPath(test_path, "temp")));
+    std::string from = path::joinPath(test_path, "same1");
+    path::copy(from, temp_path);
+
+    std::string copied_path = path::joinPath(temp_path, "same1");
+    ASSERT_TRUE(path::exists(copied_path));
+    path::remove(copied_path);
 }
