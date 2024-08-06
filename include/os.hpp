@@ -23,7 +23,7 @@ namespace os {
     namespace path {
         
         enum class CopyOption {None, SkipExisting, OverwriteExisting, OverwriteAll};
-        enum class Traversal {NonRecursive, Recursive};
+        enum class TraversalOption {NonRecursive, Recursive};
         enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
         namespace _private { // forward declaration
@@ -75,10 +75,15 @@ namespace os {
             }
         }
 
-        inline bool isDirectorySeparator(char ch) 
+        inline bool isDirectorySeparator(char ch, bool any_separator = false) 
         {
             char preferred = std::filesystem::path::preferred_separator;
-            return ch == preferred || ch == '/' && preferred == '\\';
+            
+            if(any_separator) {
+                return ch == '/' || ch == '\\';
+            }
+
+            return ch == preferred;
         }
 
         inline std::string fileExtension(const std::filesystem::path& path)
@@ -125,6 +130,11 @@ namespace os {
         inline bool hasFileExtension(const std::filesystem::path& path)
         {
             return !fileExtension(path).empty();
+        }
+
+        inline bool hasTrailingSeparator(const std::filesystem::path& path)
+        {
+            return path.filename().empty();
         }
 
         inline bool isDirectory(const std::filesystem::path& path)
@@ -335,9 +345,16 @@ namespace os {
             std::filesystem::rename(path, path.parent_path() / new_name);
         }
 
-        inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option,
+                        const CopyOption& copy_option = CopyOption::None)
         {
-            return _private::copy(from, to, false, op);
+            return _private::copy(from, to, copy_option, traversal_option);
+        }
+
+        inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option,
+                         const TraversalOption& traversal_option = TraversalOption::Recursive)
+        {
+            return _private::copy(from, to, copy_option, traversal_option);
         }
 
         inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
@@ -434,9 +451,9 @@ namespace os {
             }
         }
 
-        inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
+        inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const TraversalOption& pt = TraversalOption::NonRecursive)
         {
-            int n = pt == Traversal::NonRecursive ? 0 : -1;
+            int n = pt == TraversalOption::NonRecursive ? 0 : -1;
             return path::find(search_path, file_to_find, n);
         }
 
@@ -458,9 +475,9 @@ namespace os {
             }
         }
 
-        inline std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
+        inline std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const TraversalOption& pt = TraversalOption::NonRecursive)
         {
-            int n = pt == Traversal::NonRecursive ? 0 : -1;
+            int n = pt == TraversalOption::NonRecursive ? 0 : -1;
             return path::findAll(search_path, file_to_find, n);
         }
 
@@ -516,7 +533,7 @@ namespace os {
                 return true;
             }
 
-            inline bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
+            inline bool copy(std::filesystem::path from, std::filesystem::path to, const CopyOption& op, const TraversalOption& t_op)
             {
                 if(!std::filesystem::exists(from)) {
                     throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
@@ -544,8 +561,14 @@ namespace os {
 
                     // store the paths first before copying to prevent endless recursion
                     std::vector<std::filesystem::path> paths;
-                    for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
-                        paths.push_back(path::relativePath(entry.path(), from));
+                    if(t_op == TraversalOption::NonRecursive) {
+                        for(const auto& entry : std::filesystem::directory_iterator(from)) {
+                            paths.push_back(path::relativePath(entry.path(), from));
+                        }
+                    } else if(t_op == TraversalOption::Recursive) {
+                        for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
+                            paths.push_back(path::relativePath(entry.path(), from));
+                        }
                     }
 
                     if(!from.filename().empty()) {
@@ -606,12 +629,10 @@ namespace os {
                     } 
                 }
 
-                if(move) {
-                    path::remove(from);
-                }
-
                 return true;
             }
+
+            inline bool move(const std::)
         }
     }
 
