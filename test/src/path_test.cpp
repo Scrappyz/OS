@@ -3,44 +3,11 @@
 #include "gtest/gtest.h"
 
 namespace path = os::path;
+using CopyOption = os::path::CopyOption;
+using Traversal = os::path::TraversalOption;
 
 std::string test_path = path::joinPath(path::sourcePath(), "../test_path");
 std::string temp_path = path::joinPath(test_path, "temp");
-
-std::unordered_set<std::filesystem::path> getPathContent(const std::filesystem::path& path, bool include_parent = false)
-{
-    std::unordered_set<std::filesystem::path> result;
-    std::filesystem::path relative_to = include_parent ? path.parent_path() : path;
-
-    for(const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
-        result.insert(path::relativePath(entry.path(), relative_to));
-    }
-
-    return result;
-}
-
-bool testCopy(const std::filesystem::path& from, std::filesystem::path to) // good
-{
-    path::copy(from, to, path::CopyOption::SkipExisting);
-
-    std::unordered_set<std::filesystem::path> c1 = getPathContent(from, !from.filename().empty());
-    std::unordered_set<std::filesystem::path> c2 = getPathContent(to, false);
-
-    bool result = true;
-    for(const auto& i : c1) {
-        if(c2.count(i) < 1) {
-            result = false;
-            continue;
-        }
-        path::remove(path::joinPath(to, i));
-    }
-
-    if(!from.filename().empty()) {
-        path::remove(path::joinPath(to, from.filename()));
-    }
-
-    return result;
-}
 
 TEST(isValidFilenameChar, check)
 {
@@ -199,28 +166,56 @@ TEST(isDirectoryString, empty_string)
     ASSERT_TRUE(path::isDirectoryString("/"));
 }
 
-// TEST(copy, copying)
-// {
-//     std::string from = path::joinPath(test_path, "same1");
-//     path::copy(from, temp_path);
+TEST(copy, copy_with_directory)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
 
-//     std::string copied_path = path::joinPath(temp_path, "same1");
-//     ASSERT_TRUE(path::exists(copied_path));
-//     path::remove(copied_path);
-// }
+    ASSERT_TRUE(path::isEmpty(to));
 
-// TEST(copy, skip_existing)
-// {
-//     std::string from = path::joinPath(test_path, "same1");
-//     path::copy(from, temp_path);
+    path::copy(from, to);
 
-//     std::string copied_path = path::joinPath(temp_path, "same1");
-//     ASSERT_TRUE(path::exists(copied_path));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "source")));
 
-//     path::createFile(path::joinPath(from, "temp.txt"), path::CopyOption::OverwriteExisting);
-//     path::copy(from, temp_path, path::CopyOption::SkipExisting);
-//     ASSERT_TRUE(!path::exists(path::joinPath(copied_path, "temp.txt")));
+    path::remove(to + path::directorySeparator());
+}
 
-//     path::remove(path::joinPath(from, "temp.txt"));
-//     path::remove(copied_path);
-// }
+TEST(copy, copy_with_only_subdirectory)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+
+    ASSERT_TRUE(path::isEmpty(to));
+
+    path::copy(from + path::directorySeparator(), to);
+
+    ASSERT_TRUE(path::hasSameContent(from, to));
+
+    path::remove(to + path::directorySeparator());
+}
+
+TEST(copy, skip_existing)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+    std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
+
+    ASSERT_TRUE(path::isEmpty(to));
+
+    path::copy(path::joinPath(from, "test1.txt"), to);
+
+    ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
+
+    path::createFile(compare_file, "hello", CopyOption::OverwriteExisting);
+    path::createFile(path::joinPath(to, "test1.txt"), "hello", CopyOption::OverwriteExisting);
+
+    path::copy(from + path::directorySeparator(), to, CopyOption::SkipExisting);
+
+    ASSERT_TRUE(path::hasSameContent(from, to));
+    ASSERT_TRUE(path::hasSameContent(path::joinPath(to, "test1.txt"), compare_file));
+
+    path::remove(to + path::directorySeparator());
+}
