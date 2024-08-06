@@ -357,6 +357,11 @@ namespace os {
             return _private::copy(from, to, copy_option, traversal_option);
         }
 
+        inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to)
+        {
+            return _private::copy(from, to, CopyOption::None, TraversalOption::Recursive);
+        }
+
         // inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
         // {
         //     return _private::copy(from, to, true, op);
@@ -561,19 +566,20 @@ namespace os {
 
                     // store the paths first before copying to prevent endless recursion
                     std::vector<std::filesystem::path> paths;
-                    if(t_op == TraversalOption::NonRecursive) {
-                        for(const auto& entry : std::filesystem::directory_iterator(from)) {
-                            paths.push_back(path::relativePath(entry.path(), from));
-                        }
-                    } else if(t_op == TraversalOption::Recursive) {
+                    if(t_op == TraversalOption::Recursive) {
                         for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
-                            paths.push_back(path::relativePath(entry.path(), from));
+                            paths.push_back(std::filesystem::relative(entry.path(), from));
                         }
                     }
 
-                    if(!from.filename().empty()) {
+                    // If "from" has a trailing separator, copy "from" directory with subdirectories
+                    if(!isDirectoryString(from)) {
                         to = std::filesystem::weakly_canonical(to / from.filename());
                         std::filesystem::create_directories(to);
+                        
+                        if(t_op == TraversalOption::NonRecursive) {
+                            return true;
+                        }
                     }
 
                     for(int i = 0; i < paths.size(); i++) {
