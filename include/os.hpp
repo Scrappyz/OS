@@ -239,7 +239,7 @@ namespace os {
             return std::filesystem::current_path().string();
         }
 
-        inline std::string sourcePath() 
+        inline std::string sourcePath(bool parent_path = true) 
         {
             std::filesystem::path source_path;
             #if defined(_WIN32)
@@ -251,7 +251,12 @@ namespace os {
             #else
                 throw std::runtime_error(_private::errorMessage(__func__, "Unknown Operating System"));
             #endif
-            return source_path.parent_path().string();
+
+            if(parent_path) {
+                return source_path.parent_path().string();
+            }
+
+            return source_path.string();
         }
 
         inline std::string rootName(const std::filesystem::path& path)
