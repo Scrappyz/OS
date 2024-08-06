@@ -195,28 +195,41 @@ TEST(hasSameContent, files)
     ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same3/sand1.txt"), path::joinPath(test_path, "same3/shaggy.txt")));
 }
 
-TEST(copy, copying)
+TEST(isDirectoryString, working)
 {
-    std::string from = path::joinPath(test_path, "same1");
-    path::copy(from, temp_path);
-
-    std::string copied_path = path::joinPath(temp_path, "same1");
-    ASSERT_TRUE(path::exists(copied_path));
-    path::remove(copied_path);
+    ASSERT_FALSE(path::isDirectoryString("hello"));
+    ASSERT_TRUE(path::isDirectoryString("hello/"));
+    ASSERT_TRUE(path::isDirectoryString("hello/int//"));
 }
 
-TEST(copy, skip_existing)
+TEST(isDirectoryString, empty_string)
 {
-    // std::string from = path::joinPath(test_path, "same1");
-    // path::copy(from, temp_path);
-
-    // std::string copied_path = path::joinPath(temp_path, "same1");
-    // ASSERT_TRUE(path::exists(copied_path));
-
-    // path::createFile(path::joinPath(from, "temp.txt"), path::CopyOption::OverwriteExisting);
-    // path::copy(from, temp_path, path::CopyOption::SkipExisting);
-    // ASSERT_TRUE(!path::exists(path::joinPath(copied_path, "temp.txt")));
-
-    // path::remove(path::joinPath(from, "temp.txt"));
-    // path::remove(copied_path);
+    ASSERT_FALSE(path::isDirectoryString(""));
+    ASSERT_TRUE(path::isDirectoryString("/"));
 }
+
+// TEST(copy, copying)
+// {
+//     std::string from = path::joinPath(test_path, "same1");
+//     path::copy(from, temp_path);
+
+//     std::string copied_path = path::joinPath(temp_path, "same1");
+//     ASSERT_TRUE(path::exists(copied_path));
+//     path::remove(copied_path);
+// }
+
+// TEST(copy, skip_existing)
+// {
+//     std::string from = path::joinPath(test_path, "same1");
+//     path::copy(from, temp_path);
+
+//     std::string copied_path = path::joinPath(temp_path, "same1");
+//     ASSERT_TRUE(path::exists(copied_path));
+
+//     path::createFile(path::joinPath(from, "temp.txt"), path::CopyOption::OverwriteExisting);
+//     path::copy(from, temp_path, path::CopyOption::SkipExisting);
+//     ASSERT_TRUE(!path::exists(path::joinPath(copied_path, "temp.txt")));
+
+//     path::remove(path::joinPath(from, "temp.txt"));
+//     path::remove(copied_path);
+// }

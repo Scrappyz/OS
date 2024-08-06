@@ -29,7 +29,7 @@ namespace os {
         namespace _private { // forward declaration
             std::string errorMessage(const std::string& function_name, const std::string& message);
             char copyWarning(const std::filesystem::path& path);
-            bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
+            bool copy(std::filesystem::path from, std::filesystem::path to, const CopyOption& op, const TraversalOption& t_op);
             bool execute(const char* command, bool wait);
         }
 
@@ -78,7 +78,7 @@ namespace os {
         inline bool isDirectorySeparator(char ch, bool any_separator = false) 
         {
             char preferred = std::filesystem::path::preferred_separator;
-            
+
             if(any_separator) {
                 return ch == '/' || ch == '\\';
             }
@@ -132,9 +132,9 @@ namespace os {
             return !fileExtension(path).empty();
         }
 
-        inline bool hasTrailingSeparator(const std::filesystem::path& path)
+        inline bool isDirectoryString(const std::filesystem::path& path)
         {
-            return path.filename().empty();
+            return !path.empty() && path.filename().empty();
         }
 
         inline bool isDirectory(const std::filesystem::path& path)
@@ -357,10 +357,10 @@ namespace os {
             return _private::copy(from, to, copy_option, traversal_option);
         }
 
-        inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
-        {
-            return _private::copy(from, to, true, op);
-        }
+        // inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        // {
+        //     return _private::copy(from, to, true, op);
+        // }
 
         inline void remove(const std::filesystem::path& path)
         {
@@ -632,7 +632,7 @@ namespace os {
                 return true;
             }
 
-            inline bool move(const std::)
+            // inline bool move(const std::)
         }
     }
 
