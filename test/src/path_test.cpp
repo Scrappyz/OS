@@ -118,6 +118,10 @@ TEST(joinPath, edge_case)
     EXPECT_EQ(path::joinPath("a/b/c/", ""), "a\\b\\c\\");
     EXPECT_EQ(path::joinPath("", "a/b/c"), "a\\b\\c");
     EXPECT_EQ(path::joinPath("", "a/b/c/"), "a\\b\\c\\");
+    EXPECT_EQ(path::joinPath({}), "");
+    EXPECT_EQ(path::joinPath({"", "", "", ""}), "");
+    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
+    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
 }
 
 TEST(joinPath, concatenate)
@@ -125,6 +129,13 @@ TEST(joinPath, concatenate)
     EXPECT_EQ(path::joinPath("a/b/c", "d/e"), "a\\b\\c\\d\\e");
     EXPECT_EQ(path::joinPath("a/b/c", "d/e/"), "a\\b\\c\\d\\e\\");
     EXPECT_EQ(path::joinPath("a/b/c/", "d/e"), "a\\b\\c\\d\\e");
+    EXPECT_EQ(path::joinPath({"a/b/c"}), "a\\b\\c");
+    EXPECT_EQ(path::joinPath({"a/b/c/"}), "a\\b\\c\\");
+    EXPECT_EQ(path::joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
+    EXPECT_EQ(path::joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
 }
 
 TEST(joinPath, end_separator)
@@ -141,29 +152,6 @@ TEST(joinPath, end_separator)
     EXPECT_EQ(path::joinPath("a/b/c/d/../../e/", ""), "a\\b\\e\\");
     EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e"), "a\\b\\e");
     EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e/"), "a\\b\\e\\");
-}
-
-TEST(joins, edge_case)
-{
-    EXPECT_EQ(path::joinPath({}), "");
-    EXPECT_EQ(path::joinPath({"", "", "", ""}), "");
-    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
-    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
-}
-
-TEST(joins, concatenate)
-{
-    EXPECT_EQ(path::joinPath({"a/b/c"}), "a\\b\\c");
-    EXPECT_EQ(path::joinPath({"a/b/c/"}), "a\\b\\c\\");
-    EXPECT_EQ(path::joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
-    EXPECT_EQ(path::joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
-}
-
-TEST(joins, end_separator)
-{
     EXPECT_EQ(path::joinPath({"a/b/c/d/../.."}), "a\\b");
     EXPECT_EQ(path::joinPath({"a/b/c/d/../../"}), "a\\b\\");
     EXPECT_EQ(path::joinPath({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
@@ -179,20 +167,23 @@ TEST(hasSameContent, not_exist)
 
 TEST(hasSameContent, not_same_type)
 {
-    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "same3"), path::joinPath(test_path, "same3/shaggy.txt")), std::exception);
-    EXPECT_THROW(path::hasSameContent(path::joinPath(test_path, "same3/shaggy.txt"), path::joinPath(test_path, "same3")), std::exception);
+    std::string test_suite_path = path::joinPath(test_path, "hasSameContent");
+    EXPECT_THROW(path::hasSameContent(path::joinPath(test_suite_path, "same3"), path::joinPath(test_suite_path, "same3/shaggy.txt")), std::exception);
+    EXPECT_THROW(path::hasSameContent(path::joinPath(test_suite_path, "same3/shaggy.txt"), path::joinPath(test_suite_path, "same3")), std::exception);
 }
 
 TEST(hasSameContent, directories)
 {
-    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "same2")));
-    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "same3")));
+    std::string test_suite_path = path::joinPath(test_path, "hasSameContent");
+    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_suite_path, "same1"), path::joinPath(test_suite_path, "same2")));
+    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_suite_path, "same1"), path::joinPath(test_suite_path, "same3")));
 }
 
 TEST(hasSameContent, files)
 {
-    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_path, "same3/shaggy.txt"), path::joinPath(test_path, "same3/shaggy1.txt")));
-    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_path, "same3/sand1.txt"), path::joinPath(test_path, "same3/shaggy.txt")));
+    std::string test_suite_path = path::joinPath(test_path, "hasSameContent");
+    ASSERT_TRUE(path::hasSameContent(path::joinPath(test_suite_path, "same3/shaggy.txt"), path::joinPath(test_suite_path, "same3/shaggy1.txt")));
+    ASSERT_FALSE(path::hasSameContent(path::joinPath(test_suite_path, "same3/sand1.txt"), path::joinPath(test_suite_path, "same3/shaggy.txt")));
 }
 
 TEST(isDirectoryString, working)
