@@ -688,6 +688,12 @@ namespace os {
                     throw std::runtime_error(_private::errorMessage(__func__, "\"" + source.string() + "\" does not exist"));
                 }
 
+                if(op == CopyOption::OverwriteAll) {
+                    for(const auto& entry : std::filesystem::directory_iterator(destination)) {
+                        path::remove(entry.path());
+                    }
+                }
+
                 char ch;
                 for(const auto& i : paths) {
                     std::filesystem::path from = std::filesystem::weakly_canonical(source / i);
