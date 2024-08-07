@@ -219,3 +219,27 @@ TEST(copy, skip_existing)
 
     path::remove(to + path::directorySeparator());
 }
+
+TEST(copy, overwrite_existing)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+    std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
+
+    ASSERT_TRUE(path::isEmpty(to));
+
+    path::copy(path::joinPath(from, "test1.txt"), to);
+
+    ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
+
+    path::createFile(compare_file, "hello", CopyOption::OverwriteExisting);
+    path::createFile(path::joinPath(to, "test1.txt"), "hello", CopyOption::OverwriteExisting);
+
+    path::copy(from + path::directorySeparator(), to, CopyOption::OverwriteExisting);
+
+    ASSERT_TRUE(path::hasSameContent(from, to));
+    ASSERT_FALSE(path::hasSameContent(path::joinPath(to, "test1.txt"), compare_file));
+
+    path::remove(to + path::directorySeparator());
+}
