@@ -31,8 +31,8 @@ namespace os {
             std::string errorMessage(const std::string& function_name, const std::string& message);
             char copyWarning(const std::filesystem::path& path);
             bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op);
-            bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, const std::filesystem::path& to, const CopyOption& op);
-            bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op);
+            bool copy(const std::filesystem::path& source, const std::set<std::string>& paths, const std::filesystem::path& destination, const CopyOption& op);
+            bool move(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op);
         }
 
         inline bool exists(const std::filesystem::path& path)
@@ -554,7 +554,8 @@ namespace os {
                 return true;
             }
 
-            inline bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op)
+            inline bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, 
+                             const CopyOption& op, const TraversalOption& t_op)
             {
                 if(!std::filesystem::exists(source)) {
                     throw std::runtime_error(_private::errorMessage(__func__, "\"" + source.string() + "\" does not exist"));
@@ -661,7 +662,8 @@ namespace os {
                 return true;
             }
 
-            inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, const std::filesystem::path& to, const CopyOption& op)
+            inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, 
+                             const std::filesystem::path& to, const CopyOption& op)
             {
                 if(!std::filesystem::exists(from)) {
                     throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
@@ -672,13 +674,13 @@ namespace os {
                 }
             }
 
-            inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op)
+            inline bool move(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op)
             {
-                if(!_private::copy(from, to, op, t_op)) {
+                if(!_private::copy(source, destination, op, t_op)) {
                     return false;
                 }
 
-                path::remove(from);
+                path::remove(source);
                 return true;
             }
         }
