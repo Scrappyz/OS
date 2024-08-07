@@ -30,7 +30,7 @@ namespace os {
             std::string errorMessage(const std::string& function_name, const std::string& message);
             char copyWarning(const std::filesystem::path& path);
             bool copy(std::filesystem::path from, std::filesystem::path to, const CopyOption& op, const TraversalOption& t_op);
-            bool execute(const char* command, bool wait);
+            bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op);
         }
 
         inline bool exists(const std::filesystem::path& path)
@@ -362,10 +362,22 @@ namespace os {
             return _private::copy(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
-        // inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
-        // {
-        //     return _private::copy(from, to, true, op);
-        // }
+        inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option,
+                        const CopyOption& copy_option = CopyOption::None)
+        {
+            return _private::move(from, to, copy_option, traversal_option);
+        }
+
+        inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option,
+                         const TraversalOption& traversal_option = TraversalOption::Recursive)
+        {
+            return _private::move(from, to, copy_option, traversal_option);
+        }
+
+        inline bool move(const std::filesystem::path& from, const std::filesystem::path& to)
+        {
+            return _private::move(from, to, CopyOption::None, TraversalOption::Recursive);
+        }
 
         inline void remove(const std::filesystem::path& path)
         {
@@ -638,7 +650,15 @@ namespace os {
                 return true;
             }
 
-            // inline bool move(const std::)
+            inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op)
+            {
+                if(!_private::copy(from, to, op, t_op)) {
+                    return false;
+                }
+
+                path::remove(from);
+                return true;
+            }
         }
     }
 
