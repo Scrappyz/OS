@@ -42,7 +42,7 @@ Defined in namespace `os::path`
 | [execute](Functions/execute.md) | execute a command |
 | [exists](Functions/exists.md) | checks if the given path exists |
 | [fileExtension](Functions/fileExtension.md) | returns the file extension of a given path or filename |
-| [fileSize](Functions/fileSize.md) | returns the file size of a given path |
+| [size](Functions/size.md) | returns the size of a given path |
 | [filename](Functions/filename.md) | returns the filename of a given path |
 | [find](Functions/find.md) | finds a given file |
 | [findAll](Functions/findAll.md) | finds multiple of the same file |

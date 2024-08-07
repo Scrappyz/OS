@@ -1,9 +1,9 @@
-## os::path::fileSize
+## os::path::size
 Defined in header `os.hpp`
 
 | Declarations |
 | --- |
-| double fileSize(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte) |
+| double size(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte) |
 
 ## Parameters
 `path` - the path to get the size of \
@@ -21,10 +21,10 @@ using namespace std;
 
 int main()
 {
-    cout << path::fileSize("Utility.exe") << " Bytes" << endl;
-    cout << path::fileSize("Utility.exe", path::SizeMetric::Kilobyte) << " KB" << endl;
-    cout << path::fileSize("Utility.exe", path::SizeMetric::Megabyte) << " MB" << endl;
-    cout << path::fileSize("Utility.exe", path::SizeMetric::Gigabyte) << " GB" << endl;
+    cout << path::size("Utility.exe") << " Bytes" << endl;
+    cout << path::size("Utility.exe", path::SizeMetric::Kilobyte) << " KB" << endl;
+    cout << path::size("Utility.exe", path::SizeMetric::Megabyte) << " MB" << endl;
+    cout << path::size("Utility.exe", path::SizeMetric::Gigabyte) << " GB" << endl;
 
     return 0;
 }
