@@ -579,6 +579,7 @@ namespace os {
                     // store the paths first before copying to prevent endless recursion
                     std::vector<std::filesystem::path> paths;
                     if(t_op == TraversalOption::Recursive) {
+                        // Get relative path to conserve memory
                         for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
                             paths.push_back(std::filesystem::relative(entry.path(), from));
                         }
@@ -591,6 +592,10 @@ namespace os {
                         
                         if(t_op == TraversalOption::NonRecursive) {
                             return true;
+                        }
+                    } else if(t_op == TraversalOption::NonRecursive) {
+                        for(const auto& entry : std::filesystem::directory_iterator(from)) {
+                            paths.push_back(std::filesystem::relative(entry.path(), from));
                         }
                     }
 

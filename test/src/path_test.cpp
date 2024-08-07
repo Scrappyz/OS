@@ -243,3 +243,76 @@ TEST(copy, overwrite_existing)
 
     path::remove(to + path::directorySeparator());
 }
+
+TEST(copy, overwrite_all)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+    std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
+
+    ASSERT_TRUE(path::isEmpty(to));
+
+    path::copy(compare_file, to);
+
+    ASSERT_TRUE(path::exists(path::joinPath(to, "compare.txt")));
+
+    path::copy(from + path::directorySeparator(), to, CopyOption::OverwriteAll);
+
+    ASSERT_FALSE(path::exists(path::joinPath(to, "compare.txt")));
+
+    path::remove(to + path::directorySeparator());
+}
+
+TEST(copy, non_recursive)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+
+    ASSERT_FALSE(path::exists(path::joinPath(to, "source")));
+
+    path::copy(from, to, Traversal::NonRecursive);
+
+    ASSERT_TRUE(path::exists(path::joinPath(to, "source")));
+    ASSERT_TRUE(path::isEmpty(path::joinPath(to, "source")));
+
+    path::remove(to + path::directorySeparator());
+}
+
+TEST(copy, non_recursive_with_trailing_separator)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+
+    ASSERT_FALSE(path::exists(path::joinPath(to, "source")));
+
+    path::copy(from + path::directorySeparator(), to, Traversal::NonRecursive);
+
+    ASSERT_FALSE(path::isEmpty(to));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "folder1")));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "test2.txt")));
+    ASSERT_TRUE(path::isEmpty(path::joinPath(to, "folder1")));
+
+    path::remove(to + path::directorySeparator());
+}
+
+TEST(move, working)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+
+    ASSERT_TRUE(path::isEmpty(to));
+    ASSERT_FALSE(path::isEmpty(from));
+
+    path::move(from + path::directorySeparator(), to);
+
+    ASSERT_TRUE(path::isEmpty(from));
+
+    path::move(to + path::directorySeparator(), from);
+
+    ASSERT_TRUE(path::isEmpty(to));
+}
