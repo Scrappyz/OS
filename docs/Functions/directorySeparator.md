@@ -1,5 +1,5 @@
-## path::directorySeparator
-Defined in header `path.hpp`
+## os::path::directorySeparator
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

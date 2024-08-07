@@ -1,5 +1,5 @@
-## path::joinPath
-Defined in header `path.hpp`
+## os::path::joinPath
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

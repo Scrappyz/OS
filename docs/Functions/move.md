@@ -1,9 +1,11 @@
-## path::move
-Defined in header `path.hpp`
+## os::path::move
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |
-| bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
+| bool move(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option, const CopyOption& copy_option = CopyOption::None) |
+| bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option, const TraversalOption& traversal_option = TraversalOption::Recursive)
+| bool move(const std::filesystem::path& from, const std::filesystem::path& to) |
 
 ## Parameters
 `from` - the source file/directory to move \

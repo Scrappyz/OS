@@ -1,5 +1,5 @@
-## path::isRelativePath
-Defined in `path.hpp`
+## os::path::isRelativePath
+Defined in `os.hpp`
 
 | Declarations |
 | --- |

@@ -25,7 +25,7 @@ Defined in namespace `os::path`
 | Enum | Description |
 | --- | --- |
 | [CopyOption](Enums/CopyOption.md) | specifies the type of copy operation to use |
-| [Traversal](Enums/Traversal.md) | specifies what type of filesystem traversal to use |
+| [TraversalOption](Enums/TraversalOption.md) | specifies what type of filesystem traversal to use |
 | [SizeMetric](Enums/SizeMetric.md) | specifies what unit of measurement to use in file sizes |
 
 ## Functions
@@ -49,12 +49,12 @@ Defined in namespace `os::path`
 | [hasFileExtension](Functions/hasFileExtension.md) | checks if a given path or filename has an extension |
 | [hasSameContent](Functions/hasSameContent.md) | checks if two directories have the same files or if two files have the same data |
 | [isAbsolutePath](Functions/isAbsolutePath.md) | checks if the given path is an absolute path |
+| [isDirectoryString](Functions/isDirectoryString.md) | checks if the given string has a trailing separator |
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
 | [isRelativePath](Functions/isRelativePath.md) | checks if the given path is a relative path |
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
 | [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
-| [open](Functions/open.md) | open a file with a program |
 | [parentPath](Functions/parentPath.md) | returns the parent directory of a path |
 | [relativePath](Functions/relativePath.md) | returns a path relative to another path |
 | [remove](Functions/remove.md) | deletes a path |

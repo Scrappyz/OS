@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [0.1.1] - 2024-07-24
+## [0.1.1] - 2024-08-07
 
 ### Added
 - Added `isDirectoryString()` function to check if a certain string is a directory via trailing separator.

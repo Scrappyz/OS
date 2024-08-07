@@ -1,5 +1,5 @@
-## path::parentPath
-Defined in header `path.hpp`
+## os::path::parentPath
+Defined in header `os.hpp`
 
 | |
 | --- |

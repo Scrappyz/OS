@@ -1,5 +1,5 @@
-## path::Traversal
-Defined in header `path.hpp`
+## os::path::TraversalOption
+Defined in header `os.hpp`
 
 | Members | Description |
 | --- | --- |

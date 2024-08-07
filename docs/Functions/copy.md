@@ -1,14 +1,17 @@
-## path::copy
-Defined in header `path.hpp`
+## os::path::copy
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |
-| bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
+| bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option, const CopyOption& copy_option = CopyOption::None) |
+| bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option, const TraversalOption& traversal_option = TraversalOption::Recursive)
+| bool copy(const std::filesystem::path& from, const std::filesystem::path& to) |
 
 ## Parameters
 `from` - the source file/directory to copy \
 `to` - the destination file/directory to copy to \
-`op` - option what to do with existing files
+`copy_option` - option what to do with existing files \
+`traversal_option` - option if traversal is recursive or not
 
 ## Return Value
 Returns `true` if the copy operation was completed, `false` otherwise.

@@ -1,5 +1,5 @@
-## path::fileSize
-Defined in header `path.hpp`
+## os::path::fileSize
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

@@ -1,5 +1,5 @@
-## Path::hasSameContent
-Defined in `path.hpp`
+## os::path::hasSameContent
+Defined in `os.hpp`
 
 | |
 | --- |

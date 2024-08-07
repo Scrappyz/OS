@@ -1,5 +1,5 @@
-## path::isValidFilenameChar
-Defined in header `path.hpp`
+## os::path::isValidFilenameChar
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

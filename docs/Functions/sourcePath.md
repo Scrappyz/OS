@@ -1,9 +1,12 @@
-## path::sourcePath
-Defined in header `path.hpp`
+## os::path::sourcePath
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |
-| std::string sourcePath() |
+| std::string sourcePath(bool parent_path = true) |
+
+## Parameters
+`parent_path` - if `true`, return the parent path of the source
 
 ## Return Value
 Returns the absolute path to the executable.

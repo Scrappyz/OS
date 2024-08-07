@@ -1,5 +1,5 @@
-## path::filename
-Defined in header `path.hpp`
+## os::path::filename
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

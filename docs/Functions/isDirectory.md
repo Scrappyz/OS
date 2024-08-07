@@ -1,5 +1,5 @@
-## path::isDirectory
-Defined in header `path.hpp`
+## os::path::isDirectory
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

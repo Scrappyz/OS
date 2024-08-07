@@ -1,4 +1,5 @@
-## path::currentPath
+## os::path::currentPath
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

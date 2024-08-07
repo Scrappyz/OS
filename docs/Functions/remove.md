@@ -1,5 +1,5 @@
-## path::remove
-Defined in header `path.hpp`
+## os::path::remove
+Defined in header `os.hpp`
 
 | |
 | --- |

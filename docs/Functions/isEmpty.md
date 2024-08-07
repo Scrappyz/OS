@@ -1,4 +1,4 @@
-## path::isEmpty
+## os::path::isEmpty
 Defined in header `os.hpp`
 
 | Overloads |

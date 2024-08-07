@@ -1,5 +1,5 @@
-## path::findAll
-Defined in header `path.hpp`
+## os::path::findAll
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

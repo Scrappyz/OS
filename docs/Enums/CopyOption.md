@@ -1,4 +1,4 @@
-## path::CopyOption
+## os::path::CopyOption
 Defined in header `path.hpp`
 
 | Members | Description |

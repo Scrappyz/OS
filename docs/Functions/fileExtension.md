@@ -1,5 +1,5 @@
-## path::fileExtension
-Defined in header `path.hpp`
+## os::path::fileExtension
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

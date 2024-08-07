@@ -1,4 +1,4 @@
-## path::SizeMetric
+## os::path::SizeMetric
 Defined in header `path.hpp`
 
 | Members | Description |

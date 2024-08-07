@@ -1,5 +1,5 @@
-## path::exists
-Defined in header `path.hpp`
+## os::path::exists
+Defined in header `os.hpp`
 
 | Overloads |
 | --- |

@@ -1,5 +1,5 @@
 ## path::rename
-Defined in header `path.hpp`
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |

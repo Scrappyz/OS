@@ -1,5 +1,5 @@
-## path::isAbsolutePath
-Defined in header `path.hpp`
+## os::path::isAbsolutePath
+Defined in header `os.hpp`
 
 | Declarations |
 | --- |
