@@ -379,14 +379,14 @@ namespace os {
             return _private::move(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
-        inline void remove(const std::filesystem::path& path)
+        inline bool remove(const std::filesystem::path& path)
         {
             if(!std::filesystem::exists(path)) {
-                return;
+                return false;
             }
 
             if(std::filesystem::is_directory(path)) {
-                if(path.filename().empty()) {
+                if(isDirectoryString(path)) {
                     for(const auto& entry : std::filesystem::directory_iterator(path)) {
                         std::filesystem::remove_all(entry.path());
                     }
@@ -396,6 +396,8 @@ namespace os {
             } else {
                 std::filesystem::remove(path);
             }
+
+            return true;
         }
 
         inline bool hasSameContent(const std::filesystem::path& p1, const std::filesystem::path& p2)
@@ -621,7 +623,7 @@ namespace os {
                         } 
                     }
                 } else { // is file
-                    if(from.filename().empty()) {
+                    if(isDirectoryString(from)) {
                         from = from.parent_path();
                     }
 

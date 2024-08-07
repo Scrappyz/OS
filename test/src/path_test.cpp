@@ -196,6 +196,20 @@ TEST(copy, copy_with_only_subdirectory)
     path::remove(to + path::directorySeparator());
 }
 
+TEST(copy, directory_to_file)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+    std::string temp_file = path::joinPath(to, "test.txt");
+
+    path::createFile(temp_file, "wassup", CopyOption::OverwriteExisting);
+
+    EXPECT_THROW(path::copy(from, temp_file), std::runtime_error);
+
+    path::remove(to + path::directorySeparator());
+}
+
 TEST(copy, skip_existing)
 {
     std::string test_suite_path = path::joinPath(test_path, "copy");
@@ -203,7 +217,7 @@ TEST(copy, skip_existing)
     std::string to = path::joinPath(test_suite_path, "destination");
     std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
 
-    ASSERT_TRUE(path::isEmpty(to));
+    path::remove(to + path::directorySeparator());
 
     path::copy(path::joinPath(from, "test1.txt"), to);
 
@@ -227,7 +241,7 @@ TEST(copy, overwrite_existing)
     std::string to = path::joinPath(test_suite_path, "destination");
     std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
 
-    ASSERT_TRUE(path::isEmpty(to));
+    path::remove(to + path::directorySeparator());
 
     path::copy(path::joinPath(from, "test1.txt"), to);
 
@@ -251,7 +265,7 @@ TEST(copy, overwrite_all)
     std::string to = path::joinPath(test_suite_path, "destination");
     std::string compare_file = path::joinPath(test_suite_path, "temp/compare.txt");
 
-    ASSERT_TRUE(path::isEmpty(to));
+    path::remove(to + path::directorySeparator());
 
     path::copy(compare_file, to);
 
