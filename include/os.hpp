@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include <set>
 #if defined(_WIN32)
     #include <windows.h>
 #elif defined(__linux__)
@@ -29,7 +30,8 @@ namespace os {
         namespace _private { // forward declaration
             std::string errorMessage(const std::string& function_name, const std::string& message);
             char copyWarning(const std::filesystem::path& path);
-            bool copy(std::filesystem::path from, std::filesystem::path to, const CopyOption& op, const TraversalOption& t_op);
+            bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op);
+            bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, const std::filesystem::path& to, const CopyOption& op);
             bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op);
         }
 
@@ -552,13 +554,15 @@ namespace os {
                 return true;
             }
 
-            inline bool copy(std::filesystem::path from, std::filesystem::path to, const CopyOption& op, const TraversalOption& t_op)
+            inline bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op)
             {
-                if(!std::filesystem::exists(from)) {
-                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
+                if(!std::filesystem::exists(source)) {
+                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + source.string() + "\" does not exist"));
                 }
 
                 char ch;
+                std::filesystem::path from = source;
+                std::filesystem::path to = destination;
                 if(std::filesystem::is_directory(from)) { // is directory
 
                     // Create directory when destination does not exists
@@ -655,6 +659,17 @@ namespace os {
                 }
 
                 return true;
+            }
+
+            inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, const std::filesystem::path& to, const CopyOption& op)
+            {
+                if(!std::filesystem::exists(from)) {
+                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
+                }
+
+                for(const auto& i : paths) {
+                    
+                }
             }
 
             inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op, const TraversalOption& t_op)
