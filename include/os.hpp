@@ -30,9 +30,18 @@ namespace os {
         namespace _private { // forward declaration
             std::string errorMessage(const std::string& function_name, const std::string& message);
             char copyWarning(const std::filesystem::path& path);
-            bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op);
-            bool copy(const std::filesystem::path& source, const std::set<std::string>& paths, const std::filesystem::path& destination, const CopyOption& op);
-            bool move(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op);
+
+            bool copy(const std::filesystem::path& source, const std::filesystem::path& destination, 
+                      const CopyOption& op, const TraversalOption& t_op);
+
+            bool copy(const std::filesystem::path& source, const std::set<std::string>& paths, 
+                      const std::filesystem::path& destination, const CopyOption& op);
+
+            bool move(const std::filesystem::path& source, const std::filesystem::path& destination, 
+                      const CopyOption& op, const TraversalOption& t_op);
+
+            bool move(const std::filesystem::path& source, const std::set<std::string>& paths, 
+                      const std::filesystem::path& destination, const CopyOption& op);
         }
 
         inline bool exists(const std::filesystem::path& path)
@@ -386,6 +395,11 @@ namespace os {
             return _private::move(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
+        inline bool move(const std::filesystem::path& from, const std::set<std::string>& paths_to_copy_in_from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        {
+            return _private::move(from, paths_to_copy_in_from, to, op);
+        }
+
         inline bool remove(const std::filesystem::path& path)
         {
             if(!std::filesystem::exists(path)) {
@@ -709,6 +723,26 @@ namespace os {
                 }
 
                 path::remove(source);
+                return true;
+            }
+
+            inline bool move(const std::filesystem::path& source, const std::set<std::string>& paths, 
+                             const std::filesystem::path& destination, const CopyOption& op)
+            {
+                if(!_private::copy(source, paths, destination, op)) {
+                    return false;
+                }
+
+                for(auto it = paths.rbegin(); it != paths.rend(); it++) {
+                    std::string full_path = path::joinPath(source, *it);
+
+                    if(isDirectory(full_path) && !isEmpty(full_path)) {
+                        continue;
+                    }
+
+                    path::remove(full_path);
+                }
+
                 return true;
             }
         }
