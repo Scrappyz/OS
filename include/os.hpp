@@ -364,6 +364,11 @@ namespace os {
             return _private::copy(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
+        inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths_to_copy_in_from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        {
+            return _private::copy(from, paths_to_copy_in_from, to, op);
+        }
+
         inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option,
                         const CopyOption& copy_option = CopyOption::None)
         {
@@ -662,19 +667,42 @@ namespace os {
                 return true;
             }
 
-            inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths, 
-                             const std::filesystem::path& to, const CopyOption& op)
+            inline bool copy(const std::filesystem::path& source, const std::set<std::string>& paths, 
+                             const std::filesystem::path& destination, const CopyOption& op)
             {
-                if(!std::filesystem::exists(from)) {
-                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
+                if(!std::filesystem::exists(source)) {
+                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + source.string() + "\" does not exist"));
                 }
 
+                char ch;
                 for(const auto& i : paths) {
+                    std::filesystem::path from = std::filesystem::weakly_canonical(source / i);
+                    std::filesystem::path to = std::filesystem::weakly_canonical(destination / std::filesystem::relative(from, source));
+
+                    bool is_source_dir = std::filesystem::is_directory(from);
+                    bool destination_exists = std::filesystem::exists(to);
                     
+                    // display warning
+                    if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
+                        ch = _private::copyWarning(path::relativePath(to));
+                    }
+
+                    if(ch == 'x' || ch == 'X') {
+                        return false;
+                    }
+
+                    if(is_source_dir) { 
+                        std::filesystem::create_directories(to);
+                    } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                        _private::copyFile(from, to);
+                    } 
                 }
+
+                return true;
             }
 
-            inline bool move(const std::filesystem::path& source, const std::filesystem::path& destination, const CopyOption& op, const TraversalOption& t_op)
+            inline bool move(const std::filesystem::path& source, const std::filesystem::path& destination, 
+                             const CopyOption& op, const TraversalOption& t_op)
             {
                 if(!_private::copy(source, destination, op, t_op)) {
                     return false;
