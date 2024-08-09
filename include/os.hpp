@@ -548,6 +548,11 @@ namespace os {
 
             inline bool copyFile(const std::filesystem::path& from, const std::filesystem::path& to) 
             {
+                std::filesystem::path parent_temp = to.parent_path();
+                if(!parent_temp.empty() && !std::filesystem::exists(parent_temp)) {
+                    std::filesystem::create_directories(parent_temp);
+                }
+
                 std::ifstream source(from, std::ios::binary);
                 if(!source.is_open()) {
                     return false;
@@ -699,8 +704,8 @@ namespace os {
                     std::filesystem::path from = std::filesystem::weakly_canonical(source / i);
                     std::filesystem::path to = std::filesystem::weakly_canonical(destination / std::filesystem::relative(from, source));
 
-                    bool is_source_dir = std::filesystem::is_directory(from);
                     bool destination_exists = std::filesystem::exists(to);
+                    bool is_source_dir = std::filesystem::is_directory(from);
                     
                     // display warning
                     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {

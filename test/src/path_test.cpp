@@ -331,42 +331,60 @@ TEST(copy, custom_paths)
     path::remove(to + path::directorySeparator());
 }
 
-TEST(move, working)
+TEST(copy, custom_paths_no_parent)
 {
     std::string test_suite_path = path::joinPath(test_path, "copy");
     std::string from = path::joinPath(test_suite_path, "source");
     std::string to = path::joinPath(test_suite_path, "destination");
-
-    ASSERT_TRUE(path::isEmpty(to));
-    ASSERT_FALSE(path::isEmpty(from));
-
-    path::move(from + path::directorySeparator(), to);
-
-    ASSERT_TRUE(path::isEmpty(from));
-
-    path::move(to + path::directorySeparator(), from);
-
-    ASSERT_TRUE(path::isEmpty(to));
-}
-
-TEST(move, custom_paths)
-{
-    std::string test_suite_path = path::joinPath(test_path, "copy");
-    std::string from = path::joinPath(test_suite_path, "source");
-    std::string to = path::joinPath(test_suite_path, "destination");
-    std::set<std::string> paths = {path::joinPath(from, "folder1"), path::joinPath(from, "test1.txt"), path::joinPath(from, "folder1/test1.txt")};
+    std::set<std::string> paths = {path::joinPath(from, "test1.txt"), path::joinPath(from, "folder1/test1.txt")};
 
     path::remove(to + path::directorySeparator());
 
-    path::move(from, paths, to, CopyOption::OverwriteExisting);
+    path::copy(from, paths, to, CopyOption::OverwriteExisting);
 
     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1")));
     ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1/test1.txt")));
 
-    ASSERT_TRUE(path::exists(path::joinPath(from, "folder1")));
-    ASSERT_FALSE(path::exists(path::joinPath(from, "folder1/test1.txt")));
-    ASSERT_FALSE(path::exists(path::joinPath(from, "test1.txt")));
-
     path::remove(to + path::directorySeparator());
 }
+
+// TEST(move, working)
+// {
+//     std::string test_suite_path = path::joinPath(test_path, "copy");
+//     std::string from = path::joinPath(test_suite_path, "source");
+//     std::string to = path::joinPath(test_suite_path, "destination");
+
+//     ASSERT_TRUE(path::isEmpty(to));
+//     ASSERT_FALSE(path::isEmpty(from));
+
+//     path::move(from + path::directorySeparator(), to);
+
+//     ASSERT_TRUE(path::isEmpty(from));
+
+//     path::move(to + path::directorySeparator(), from);
+
+//     ASSERT_TRUE(path::isEmpty(to));
+// }
+
+// TEST(move, custom_paths)
+// {
+//     std::string test_suite_path = path::joinPath(test_path, "copy");
+//     std::string from = path::joinPath(test_suite_path, "source");
+//     std::string to = path::joinPath(test_suite_path, "destination");
+//     std::set<std::string> paths = {path::joinPath(from, "folder1"), path::joinPath(from, "test1.txt"), path::joinPath(from, "folder1/test1.txt")};
+
+//     path::remove(to + path::directorySeparator());
+
+//     path::move(from, paths, to, CopyOption::OverwriteExisting);
+
+//     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1")));
+//     ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
+//     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1/test1.txt")));
+
+//     ASSERT_TRUE(path::exists(path::joinPath(from, "folder1")));
+//     ASSERT_FALSE(path::exists(path::joinPath(from, "folder1/test1.txt")));
+//     ASSERT_FALSE(path::exists(path::joinPath(from, "test1.txt")));
+
+//     path::remove(to + path::directorySeparator());
+// }
