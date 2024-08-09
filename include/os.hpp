@@ -196,6 +196,11 @@ namespace os {
             return std::filesystem::path::preferred_separator;
         }
 
+        inline std::string normalizePath(const std::filesystem::path& path)
+        {
+            return std::filesystem::weakly_canonical(path).string();
+        }
+
         inline std::string absolutePath(const std::filesystem::path& path)
         {
             return std::filesystem::absolute(path).string();

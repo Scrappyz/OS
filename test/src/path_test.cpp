@@ -81,48 +81,48 @@ TEST(appendFileExtension, join)
 TEST(joinPath, edge_case)
 {
     EXPECT_EQ(path::joinPath("", ""), "");
-    EXPECT_EQ(path::joinPath("a/b/c", ""), "a\\b\\c");
-    EXPECT_EQ(path::joinPath("a/b/c/", ""), "a\\b\\c\\");
-    EXPECT_EQ(path::joinPath("", "a/b/c"), "a\\b\\c");
-    EXPECT_EQ(path::joinPath("", "a/b/c/"), "a\\b\\c\\");
+    EXPECT_EQ(path::joinPath("a/b/c", ""), path::normalizePath("a/b/c"));
+    EXPECT_EQ(path::joinPath("a/b/c/", ""), path::normalizePath("a/b/c/"));
+    EXPECT_EQ(path::joinPath("", "a/b/c"), path::normalizePath("a/b/c"));
+    EXPECT_EQ(path::joinPath("", "a/b/c/"), path::normalizePath("a/b/c/"));
     EXPECT_EQ(path::joinPath({}), "");
     EXPECT_EQ(path::joinPath({"", "", "", ""}), "");
-    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
-    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
+    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d"}), path::normalizePath("a/b/c/d"));
+    EXPECT_EQ(path::joinPath({"", "a/b", "", "c/d/"}), path::normalizePath("a/b/c/d/"));
 }
 
 TEST(joinPath, concatenate)
 {
-    EXPECT_EQ(path::joinPath("a/b/c", "d/e"), "a\\b\\c\\d\\e");
-    EXPECT_EQ(path::joinPath("a/b/c", "d/e/"), "a\\b\\c\\d\\e\\");
-    EXPECT_EQ(path::joinPath("a/b/c/", "d/e"), "a\\b\\c\\d\\e");
-    EXPECT_EQ(path::joinPath({"a/b/c"}), "a\\b\\c");
-    EXPECT_EQ(path::joinPath({"a/b/c/"}), "a\\b\\c\\");
-    EXPECT_EQ(path::joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
-    EXPECT_EQ(path::joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+    EXPECT_EQ(path::joinPath("a/b/c", "d/e"), path::normalizePath("a/b/c/d/e"));
+    EXPECT_EQ(path::joinPath("a/b/c", "d/e/"), path::normalizePath("a/b/c/d/e/"));
+    EXPECT_EQ(path::joinPath("a/b/c/", "d/e"), path::normalizePath("a/b/c/d/e"));
+    EXPECT_EQ(path::joinPath({"a/b/c"}), path::normalizePath("a/b/c"));
+    EXPECT_EQ(path::joinPath({"a/b/c/"}), path::normalizePath("a/b/c/"));
+    EXPECT_EQ(path::joinPath({"a/b/c", "d/e"}), path::normalizePath("a/b/c/d/e"));
+    EXPECT_EQ(path::joinPath({"a/b/c", "d/e/"}), path::normalizePath("a/b/c/d/e/"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h"}), path::normalizePath("a/b/c/d/e/f/g/h"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e", "f", "g/h/"}), path::normalizePath("a/b/c/d/e/f/g/h/"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), path::normalizePath("a/b/c/d/e/f/g/h/"));
 }
 
 TEST(joinPath, end_separator)
 {
-    EXPECT_EQ(path::joinPath("a/b/c/d", ".."), "a\\b\\c");
-    EXPECT_EQ(path::joinPath("a/b/c/d", "../"), "a\\b\\c\\");
-    EXPECT_EQ(path::joinPath("a/b/c/d", "../.."), "a\\b");
-    EXPECT_EQ(path::joinPath("a/b/c/d", "../../"), "a\\b\\");
-    EXPECT_EQ(path::joinPath("a/b/c/d", "."), "a\\b\\c\\d");
-    EXPECT_EQ(path::joinPath("a/b/c/d", "./"), "a\\b\\c\\d\\");
-    EXPECT_EQ(path::joinPath("a/b/c/d/..", ""), "a\\b\\c");
-    EXPECT_EQ(path::joinPath("a/b/c/d/../", ""), "a\\b\\c\\");
-    EXPECT_EQ(path::joinPath("a/b/c/d/../../e", ""), "a\\b\\e");
-    EXPECT_EQ(path::joinPath("a/b/c/d/../../e/", ""), "a\\b\\e\\");
-    EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e"), "a\\b\\e");
-    EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e/"), "a\\b\\e\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d/../.."}), "a\\b");
-    EXPECT_EQ(path::joinPath({"a/b/c/d/../../"}), "a\\b\\");
-    EXPECT_EQ(path::joinPath({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
-    EXPECT_EQ(path::joinPath({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
+    EXPECT_EQ(path::joinPath("a/b/c/d", ".."), path::normalizePath("a/b/c"));
+    EXPECT_EQ(path::joinPath("a/b/c/d", "../"), path::normalizePath("a/b/c/"));
+    EXPECT_EQ(path::joinPath("a/b/c/d", "../.."), path::normalizePath("a/b"));
+    EXPECT_EQ(path::joinPath("a/b/c/d", "../../"), path::normalizePath("a/b/"));
+    EXPECT_EQ(path::joinPath("a/b/c/d", "."), path::normalizePath("a/b/c/d"));
+    EXPECT_EQ(path::joinPath("a/b/c/d", "./"), path::normalizePath("a/b/c/d/"));
+    EXPECT_EQ(path::joinPath("a/b/c/d/..", ""), path::normalizePath("a/b/c"));
+    EXPECT_EQ(path::joinPath("a/b/c/d/../", ""), path::normalizePath("a/b/c/"));
+    EXPECT_EQ(path::joinPath("a/b/c/d/../../e", ""), path::normalizePath("a/b/e"));
+    EXPECT_EQ(path::joinPath("a/b/c/d/../../e/", ""), path::normalizePath("a/b/e/"));
+    EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e"), path::normalizePath("a/b/e"));
+    EXPECT_EQ(path::joinPath("", "a/b/c/d/../../e/"), path::normalizePath("a/b/e/"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d/../.."}), path::normalizePath("a/b"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d/../../"}), path::normalizePath("a/b/"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d/../../", "e/f/..", "g"}), path::normalizePath("a/b/e/g"));
+    EXPECT_EQ(path::joinPath({"a/b/c/d/../../", "e/f/..", "g/"}), path::normalizePath("a/b/e/g/"));
 }
 
 TEST(hasSameContent, not_exist)
@@ -349,42 +349,44 @@ TEST(copy, custom_paths_no_parent)
     path::remove(to + path::directorySeparator());
 }
 
-// TEST(move, working)
-// {
-//     std::string test_suite_path = path::joinPath(test_path, "copy");
-//     std::string from = path::joinPath(test_suite_path, "source");
-//     std::string to = path::joinPath(test_suite_path, "destination");
+TEST(move, working)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
 
-//     ASSERT_TRUE(path::isEmpty(to));
-//     ASSERT_FALSE(path::isEmpty(from));
+    ASSERT_TRUE(path::isEmpty(to));
+    ASSERT_FALSE(path::isEmpty(from));
 
-//     path::move(from + path::directorySeparator(), to);
+    path::move(from + path::directorySeparator(), to);
 
-//     ASSERT_TRUE(path::isEmpty(from));
+    ASSERT_TRUE(path::isEmpty(from));
 
-//     path::move(to + path::directorySeparator(), from);
+    path::move(to + path::directorySeparator(), from);
 
-//     ASSERT_TRUE(path::isEmpty(to));
-// }
+    ASSERT_TRUE(path::isEmpty(to));
+}
 
-// TEST(move, custom_paths)
-// {
-//     std::string test_suite_path = path::joinPath(test_path, "copy");
-//     std::string from = path::joinPath(test_suite_path, "source");
-//     std::string to = path::joinPath(test_suite_path, "destination");
-//     std::set<std::string> paths = {path::joinPath(from, "folder1"), path::joinPath(from, "test1.txt"), path::joinPath(from, "folder1/test1.txt")};
+TEST(move, custom_paths)
+{
+    std::string test_suite_path = path::joinPath(test_path, "copy");
+    std::string from = path::joinPath(test_suite_path, "source");
+    std::string to = path::joinPath(test_suite_path, "destination");
+    std::set<std::string> paths = {path::joinPath(from, "folder1"), path::joinPath(from, "test1.txt"), path::joinPath(from, "folder1/test1.txt")};
 
-//     path::remove(to + path::directorySeparator());
+    path::remove(to + path::directorySeparator());
 
-//     path::move(from, paths, to, CopyOption::OverwriteExisting);
+    path::move(from, paths, to, CopyOption::OverwriteExisting);
 
-//     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1")));
-//     ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
-//     ASSERT_TRUE(path::exists(path::joinPath(to, "folder1/test1.txt")));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "folder1")));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "test1.txt")));
+    ASSERT_TRUE(path::exists(path::joinPath(to, "folder1/test1.txt")));
 
-//     ASSERT_TRUE(path::exists(path::joinPath(from, "folder1")));
-//     ASSERT_FALSE(path::exists(path::joinPath(from, "folder1/test1.txt")));
-//     ASSERT_FALSE(path::exists(path::joinPath(from, "test1.txt")));
+    ASSERT_TRUE(path::exists(path::joinPath(from, "folder1")));
+    ASSERT_FALSE(path::exists(path::joinPath(from, "folder1/test1.txt")));
+    ASSERT_FALSE(path::exists(path::joinPath(from, "test1.txt")));
 
-//     path::remove(to + path::directorySeparator());
-// }
+    path::copy(path::joinPath(test_suite_path, "source_copy") + path::directorySeparator(), from, CopyOption::OverwriteAll);
+
+    path::remove(to + path::directorySeparator());
+}
