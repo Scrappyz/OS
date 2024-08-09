@@ -8,3 +8,4 @@ All notable changes to this project will be documented in this file.
 - Added boolean parameter to `sourcePath()` to only get the parent directory.
 - Added boolean parameter to `isDirectorySeparator()` to have an option to work with any separator.
 - Added non-recursive copy to `copy()` and `move()` with `TraversalOption` parameter.
+- Added `normalizePath()` function to convert paths to work with other operating system.

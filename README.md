@@ -55,6 +55,7 @@ Defined in namespace `os::path`
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
 | [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
+| [normalizePath](Functions/normalizePath.md) | converts a path to work with the current operating system |
 | [parentPath](Functions/parentPath.md) | returns the parent directory of a path |
 | [relativePath](Functions/relativePath.md) | returns a path relative to another path |
 | [remove](Functions/remove.md) | deletes a path |
