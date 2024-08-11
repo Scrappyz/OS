@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2024-08-11
+
+### Changed
+- Changed `normalizePath()` algorithm to just change path separators.
+
 ## [0.1.1] - 2024-08-07
 
 ### Added
