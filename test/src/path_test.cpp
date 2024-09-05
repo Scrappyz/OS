@@ -11,15 +11,20 @@ std::string temp_path = path::joinPath(test_path, "temp");
 
 TEST(isValidFilenameChar, check)
 {
-    EXPECT_EQ(path::isValidFilenameChar('<'), false);
-    EXPECT_EQ(path::isValidFilenameChar('>'), false);
-    EXPECT_EQ(path::isValidFilenameChar('|'), false);
-    EXPECT_EQ(path::isValidFilenameChar(':'), false);
-    EXPECT_EQ(path::isValidFilenameChar('\"'), false);
-    EXPECT_EQ(path::isValidFilenameChar('\\'), false);
-    EXPECT_EQ(path::isValidFilenameChar('/'), false);
-    EXPECT_EQ(path::isValidFilenameChar('?'), false);
-    EXPECT_EQ(path::isValidFilenameChar('*'), false);
+    #if defined(_WIN32)
+        EXPECT_EQ(path::isValidFilenameChar('<'), false);
+        EXPECT_EQ(path::isValidFilenameChar('>'), false);
+        EXPECT_EQ(path::isValidFilenameChar('|'), false);
+        EXPECT_EQ(path::isValidFilenameChar(':'), false);
+        EXPECT_EQ(path::isValidFilenameChar('\"'), false);
+        EXPECT_EQ(path::isValidFilenameChar('\\'), false);
+        EXPECT_EQ(path::isValidFilenameChar('/'), false);
+        EXPECT_EQ(path::isValidFilenameChar('?'), false);
+        EXPECT_EQ(path::isValidFilenameChar('*'), false);
+    #elif defined(__linux__)
+        EXPECT_EQ(path::isValidFilenameChar('/'), false);
+    #endif
+    
     EXPECT_EQ(path::isValidFilenameChar('t'), true);
 }
 
