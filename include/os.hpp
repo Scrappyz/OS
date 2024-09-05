@@ -23,8 +23,27 @@ namespace os {
     // path namespace
     namespace path {
         
+        /*
+            Options for copy operations.
+
+            Enumerations:
+            `None`: No copy option.
+            `SkipExisting`: Skip existing files and directories.
+            `OverwriteExisting`: Overwrites existing files and directories.
+            `OverwriteAll`: Deletes contents of an entire directory before copying.
+        */
         enum class CopyOption {None, SkipExisting, OverwriteExisting, OverwriteAll};
+
+        /*
+            Options for filesystem traversal.
+
+            Enumerations:
+            `NonRecursive`: Will not go through subdirectories.
+            `Recursive`: Go through subdirectories.
+        */
         enum class TraversalOption {NonRecursive, Recursive};
+
+        // Options for file sizes.
         enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
         namespace _private { // forward declaration
@@ -44,26 +63,31 @@ namespace os {
                       const std::filesystem::path& destination, const CopyOption& op);
         }
 
+        // Checks if a path exists.
         inline bool exists(const std::filesystem::path& path)
         {
             return std::filesystem::exists(path);
         }
 
+        // Checks if a directory is empty.
         inline bool isEmpty(const std::filesystem::path& path)
         {
             return std::filesystem::is_empty(path);
         }
 
+        // Checks if a path is an absolute path.
         inline bool isAbsolutePath(const std::filesystem::path& path)
         {
             return path.is_absolute();
         }
 
+        // Checks if a path is a relative path.
         inline bool isRelativePath(const std::filesystem::path& path)
         {
             return path.is_relative();
         }
 
+        // Checks if a character is a valid filename character.
         inline bool isValidFilenameChar(char ch) // checks if character passed is a valid character for filenames
         {
             switch(ch) {
@@ -86,6 +110,13 @@ namespace os {
             }
         }
 
+        /*
+            Check if a character is a directory separator.
+
+            Parameters:
+            `ch`: Character to check.
+            `any_separator`: Set to `true` to detect separators of other operating systems.
+        */
         inline bool isDirectorySeparator(char ch, bool any_separator = false) 
         {
             char preferred = std::filesystem::path::preferred_separator;
@@ -97,6 +128,7 @@ namespace os {
             return ch == preferred;
         }
 
+        // Returns the file extension of a given path.
         inline std::string fileExtension(const std::filesystem::path& path)
         {
             std::string temp = path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
@@ -117,6 +149,14 @@ namespace os {
             return result;
         }
 
+        /*
+            Adds a file extension to a given path.
+
+            Parameters:
+            `path`: Path to add extension to.
+            `extension`: Extension to add.
+            `force`: Set to `true` to add extension even if the path already has one.
+        */
         inline std::string appendFileExtension(std::string path, const std::string& extension, bool force = false)
         {
             int i = 0;
@@ -138,31 +178,43 @@ namespace os {
             return path;
         }
 
+        // Checks if a given path has a file extension.
         inline bool hasFileExtension(const std::filesystem::path& path)
         {
             return !fileExtension(path).empty();
         }
 
+        // Checks if a given string is a directory path. (E.g. `home/user/`) 
         inline bool isDirectoryString(const std::filesystem::path& path)
         {
             return !path.empty() && path.filename().empty();
         }
 
+        // Checks if a given path is a directory.
         inline bool isDirectory(const std::filesystem::path& path)
         {
             return std::filesystem::is_directory(path);
         }
 
+        // Checks if a given path is a file.
         inline bool isFile(const std::filesystem::path& path)
         {
             return std::filesystem::is_regular_file(path);
         }
 
+        // Returns the filename of a path.
         inline std::string filename(const std::filesystem::path& path) 
         {
             return path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
         }
 
+        /*
+            Returns the total size of a given path.
+
+            Parameters:
+            `path`: Path to check size.
+            `metric`: What size metric to use.
+        */
         inline double size(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
         {
             if(std::filesystem::exists(path)) {
@@ -191,11 +243,13 @@ namespace os {
             }
         }
 
+        // Returns the preferred directory separator character of the operating system.
         inline char directorySeparator() 
         {
             return std::filesystem::path::preferred_separator;
         }
 
+        // Returns the platform specific path string of the operating system.
         inline std::string normalizePath(const std::filesystem::path& path)
         {
             std::string p = path.string();
@@ -209,16 +263,31 @@ namespace os {
             return p;
         }
 
+        // Returns the absolute path of a given path.
         inline std::string absolutePath(const std::filesystem::path& path)
         {
             return std::filesystem::absolute(path).string();
         }
 
+        /*
+            Returns the relative path from the base path.
+
+            Parameters:
+            `path`: Path to get relative path.
+            `base_path`: Path where `path` will be relative to.
+        */
         inline std::string relativePath(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
         {
             return std::filesystem::relative(path, base_path).string();
         }
 
+        /*
+            Returns the parent path of a given path.
+
+            Parameters:
+            `path`: Path to get parent path.
+            `pop`: How many paths to move back.
+        */
         inline std::string parentPath(std::filesystem::path path, int pop = 1)
         {
             for(int i = 1; i <= pop; i++) {
@@ -228,6 +297,12 @@ namespace os {
             return path.string();
         }
 
+        /*
+            Returns the concatenation of two paths.
+
+            Notes:
+            - Returned path is already normalized.
+        */
         inline std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
         {
             std::string result;
@@ -253,6 +328,12 @@ namespace os {
             return result;
         }
 
+        /*
+            Returns the concatenation of two or more paths.
+
+            Notes:
+            - Returned path is already normalized.
+        */
         inline std::string joinPath(const std::vector<std::filesystem::path>& paths)
         {
             if(paths.empty()) {
@@ -268,11 +349,18 @@ namespace os {
             return joinPath(result, paths.back());
         }
 
+        // Returns the path you are in the command-line.
         inline std::string currentPath() 
         {
             return std::filesystem::current_path().string();
         }
 
+        /*
+            Returns the path to the source or executable.
+
+            Parameters:
+            `parent_path`: When `true`, returns the path to the parent directory of the source. (Default `true`)
+        */
         inline std::string sourcePath(bool parent_path = true) 
         {
             std::filesystem::path source_path;
@@ -293,16 +381,26 @@ namespace os {
             return source_path.string();
         }
 
+        // Returns the root name of the path.
         inline std::string rootName(const std::filesystem::path& path)
         {
             return path.root_name().string();
         }
 
+        // Create directories leading to the given path if there is none.
         inline bool createDirectory(const std::filesystem::path& path)
         {
             return std::filesystem::create_directories(path);
         }
 
+        /*
+            Creates a file in the given path.
+
+            Parameters:
+            `path`: File to create.
+            `data`: Text to place in the file.
+            `op`: Copy option to use.
+        */
         inline bool createFile(const std::filesystem::path& path, const std::string& data, const CopyOption& op = CopyOption::None)
         {
             if(op == CopyOption::SkipExisting) {
@@ -326,6 +424,14 @@ namespace os {
             }
         }
 
+        /*
+            Creates a file in the given path.
+
+            Parameters:
+            `path`: File to create.
+            `data`: Text to place in the file.
+            `op`: Copy option to use.
+        */
         inline bool createFile(const std::filesystem::path& path, const std::vector<std::string>& data, const CopyOption& op = CopyOption::None)
         {
             if(op == CopyOption::SkipExisting) {
@@ -359,60 +465,149 @@ namespace os {
             }
         }
 
+        /*
+            Creates a file in the given path.
+
+            Parameters:
+            `path`: File to create.
+            `op`: Copy option to use.
+        */
         inline bool createFile(const std::filesystem::path& path, const CopyOption& op = CopyOption::None)
         {
             return createFile(path, "", op);
         }
 
+        /*
+            Rename a given path.
+
+            Parameters:
+            `path`: Path to rename.
+            `new_name`: Name to give.
+        */
         inline void rename(const std::filesystem::path& path, const std::string& new_name)
         {
             std::filesystem::rename(path, path.parent_path() / new_name);
         }
 
+        /*
+            Copy a path to another path.
+
+            Parameters:
+            `from`: Path to copy.
+            `to`: Path to copy to.
+            `traversal_option`: Traversal to use.
+            `copy_option`: Copy option to use. (Defaults `None`)
+        */
         inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option,
                         const CopyOption& copy_option = CopyOption::None)
         {
             return _private::copy(from, to, copy_option, traversal_option);
         }
 
+        /*
+            Copy a path to another path.
+
+            Parameters:
+            `from`: Path to copy.
+            `to`: Path to copy to.
+            `copy_option`: Copy option to use.
+            `traversal_option`: Traversal to use. (Defaults `Recursive`)
+        */
         inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option,
                          const TraversalOption& traversal_option = TraversalOption::Recursive)
         {
             return _private::copy(from, to, copy_option, traversal_option);
         }
 
+        /*
+            Copy a path to another path.
+
+            Parameters:
+            `from`: Path to copy.
+            `to`: Path to copy to.
+        */
         inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to)
         {
             return _private::copy(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
-        inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths_to_copy_in_from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        /*
+            Copy a path to another path.
+
+            Parameters:
+            `from`: Path to copy.
+            `to`: Path to copy to.
+            `paths_to_copy`: Selected paths in `from` to be copied.
+            `op`: Copy option to use.
+        */
+        inline bool copy(const std::filesystem::path& from, const std::set<std::string>& paths_to_copy, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
         {
-            return _private::copy(from, paths_to_copy_in_from, to, op);
+            return _private::copy(from, paths_to_copy, to, op);
         }
 
+        /*
+            Moves a path to another path.
+
+            Parameters:
+            `from`: Path to move.
+            `to`: Path to move to.
+            `traversal_option`: Traversal to use.
+            `copy_option`: Copy option to use. (Defaults `None`)
+        */
         inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const TraversalOption& traversal_option,
                         const CopyOption& copy_option = CopyOption::None)
         {
             return _private::move(from, to, copy_option, traversal_option);
         }
 
+        /*
+            Moves a path to another path.
+
+            Parameters:
+            `from`: Path to move.
+            `to`: Path to move to.
+            `copy_option`: Copy option to use.
+            `traversal_option`: Traversal to use. (Defaults `Recursive`)
+        */
         inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& copy_option,
                          const TraversalOption& traversal_option = TraversalOption::Recursive)
         {
             return _private::move(from, to, copy_option, traversal_option);
         }
 
+        /*
+            Moves a path to another path.
+
+            Parameters:
+            `from`: Path to move.
+            `to`: Path to move to.
+        */
         inline bool move(const std::filesystem::path& from, const std::filesystem::path& to)
         {
             return _private::move(from, to, CopyOption::None, TraversalOption::Recursive);
         }
 
-        inline bool move(const std::filesystem::path& from, const std::set<std::string>& paths_to_copy_in_from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        /*
+            Move a path to another path.
+
+            Parameters:
+            `from`: Path to Move.
+            `to`: Path to move to.
+            `paths_to_move`: Selected paths in `from` to be moved.
+            `op`: Copy option to use. (Defaults `None`)
+        */
+        inline bool move(const std::filesystem::path& from, const std::set<std::string>& paths_to_move, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
         {
-            return _private::move(from, paths_to_copy_in_from, to, op);
+            return _private::move(from, paths_to_move, to, op);
         }
 
+        /*
+            Deletes a given path if it exists.
+
+            Notes:
+            - If the give path is a directory string (E.g. `home/user/`) then only the contents of 
+              the path will be deleted. 
+        */
         inline bool remove(const std::filesystem::path& path)
         {
             if(!std::filesystem::exists(path)) {
@@ -434,6 +629,12 @@ namespace os {
             return true;
         }
 
+        /*
+            Checks if two files or directories have the same content.
+
+            Notes:
+            - Both parameters need to point to either both a file or directory. Else it will throw an error.
+        */
         inline bool hasSameContent(const std::filesystem::path& p1, const std::filesystem::path& p2)
         {
             if(!std::filesystem::exists(p1)) {
@@ -486,7 +687,7 @@ namespace os {
                                     std::istreambuf_iterator<char>(f2.rdbuf()));
             }
         }
-
+        
         inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
         {
             if(std::filesystem::exists(search_path)) {
