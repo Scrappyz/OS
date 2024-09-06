@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [0.1.3] - Unreleased
+## [0.1.3] - 2024-09-06
+
+### Changed
+- Changed return value of `execute()` to `bool` and added a string reference parameter to acquire command output.
 
 ### Fixed
 - Fixed some Linux specific code.
