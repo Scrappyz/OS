@@ -973,19 +973,53 @@ namespace os {
         }
     }
 
-    inline std::string execute(const std::string& command, const std::string& mode = "r")
+    /*
+        Execute a command in the shell.
+
+        Return Value:
+        - Returns `true` if the command executes successfully. Else it will return `false`.
+
+        Parameters:
+        `command`: Command to execute.
+        `output`: A string reference to get the output of the executed command.
+        `mode`: Use `r` for read-mode, `w` for write-mode.
+    */
+    inline bool execute(const std::string& command, std::string& output, const std::string& mode = "r")
     {
+        // Open the pipe using platform-specific popen function
         FILE* pipe = popen(command.c_str(), mode.c_str());
         if(!pipe) {
-            throw std::runtime_error("Execution Failed");
+            return false;  // Command failed to execute
         }
 
         char buffer[128];
-        std::string output;
+        output.clear();  // Clear the output string before capturing the result
+
+        // Read the command's output chunk by chunk
         while(fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-            output += buffer;
+            output.append(buffer);  // Append each chunk to the output string
         }
-        pclose(pipe);
-        return output;
+
+        // Get the command exit status
+        int exit_code = pclose(pipe);
+        
+        // Return true if the command was successful (exit code is 0)
+        return (exit_code == 0);
+    }
+
+    /*
+        Execute a command in the shell.
+
+        Return Value:
+        - Returns `true` if the command executes successfully. Else it will return `false`.
+
+        Parameters:
+        `command`: Command to execute.
+        `mode`: Use `r` for read-mode, `w` for write-mode.
+    */
+    inline bool execute(const std::string& command, const std::string& mode = "r")
+    {
+        std::string dummy_output;
+        return execute(command, dummy_output, mode);
     }
 }
